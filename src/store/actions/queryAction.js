@@ -6,9 +6,7 @@ export const getQueryData = () => async dispatch => {
   .then(response => {
     dispatch({
       type: GET_QUERYDATA,
-      payload: {
-        movies: response
-      }
+      payload: response.sort((a, b) => a.name > b.name ? 1:-1),
     })
   })
   .catch(error => {

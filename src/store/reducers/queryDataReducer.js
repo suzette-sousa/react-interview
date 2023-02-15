@@ -9,7 +9,7 @@ const queryDataReducer = (state = initialState, action) => {
     case GET_QUERYDATA:
       return {
         ...state,
-        data: action.payload,
+        results: action.payload,
         loading: false
       }
     default:
