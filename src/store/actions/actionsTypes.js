@@ -1,0 +1,2 @@
+export const GET_QUERYDATA = 'GET_QUERYDATA';
+export const QUERYDATA_ERROR = 'QUERYDATA_ERROR';
