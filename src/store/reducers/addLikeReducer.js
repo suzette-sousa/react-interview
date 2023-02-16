@@ -8,7 +8,7 @@ const initialState = {
 const addLikeReducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case ADD_LIKE:
-      const movie = action.payload.queryData.results.find(x=> x.id === action.payload.id);
+      const movie = action.payload.queryData.results.find(movie=> movie.id === action.payload.id);
       return {
         ...movie,
         [action.payload.field]: action.payload.value
