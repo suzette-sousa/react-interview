@@ -27,6 +27,6 @@ const Movies = (props) => {
   );
 }
 
-const mapStateToProps = (state) => ({queryData: state.queryData, newData: state.newData});
+const mapStateToProps = (state) => ({queryData: state.queryData, addLike: state.addLike, newData: state.newData});
 
 export default connect(mapStateToProps)(Movies);
