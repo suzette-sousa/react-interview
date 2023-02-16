@@ -34,7 +34,7 @@ const Movies = (props) => {
             <div key={index} onClick={(e) => filterByCategory(e)}>{category}</div>
           ))}
 
-          {count !== results?.length && <p>{results?.length} résultat{results > 1 && "s"}</p>}
+          {count !== results?.length && <p>{results?.length} résultat{results?.length > 1 && "s"}</p>}
 
           {results?.length && results.map((movie) => (
             <div key={movie.id}>
