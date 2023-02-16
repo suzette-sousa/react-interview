@@ -3,9 +3,12 @@ import {ADD_LIKE, GET_QUERYDATA} from '../actions/actionsTypes';
 const initialState = {
   loading: true,
   results: [],
-  count: 0,
+  countResults: 0,
+  countAll: 0,
   categories: [],
-  filters: null
+  filters: null,
+  pageNumber: 1,
+  pageSize: 4
 }
 
 const queryDataReducer = (state = initialState, action) => {
@@ -13,11 +16,14 @@ const queryDataReducer = (state = initialState, action) => {
     case GET_QUERYDATA:
       return {
         ...state,
-        results: action.payload.results.filter(movie => !action.payload.filters?.category ? movie : movie.category === action.payload.filters?.category),
+        results: action.payload.results.filter(movie => !action.payload.filters?.category ? movie : movie.category === action.payload.filters?.category).slice((action.payload?.pageNumber - 1) * action.payload?.pageSize, action.payload?.pageNumber * action.payload?.pageSize),
         filters: action.payload.filters,
-        count: action.payload.results.length,
+        countResults: action.payload.results.filter(movie => !action.payload.filters?.category ? movie : movie.category === action.payload.filters?.category).length,
+        countAll: action.payload.results.length,
         categories: [...new Set(action.payload.results.map(movie=> movie.category))],
-        loading: false
+        loading: false,
+        pageNumber: action.payload?.pageNumber,
+        pageSize: action.payload?.pageSize
       }
     case ADD_LIKE:
       return {
