@@ -1,4 +1,4 @@
-import store from '../store';
+import {store} from '../store';
 import {ADD_LIKE} from './actionsTypes';
 
 export const addLike = (id, field, value) => {
