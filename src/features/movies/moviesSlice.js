@@ -70,10 +70,18 @@ export const moviesSlice = createSlice({
       state.pageNumber += 1;
     },
     delMovie: (state, action) => {
-      state.results= [...state.results].filter(movie => movie.id !== action.payload);
-      state.filteredMovies= [...state.filteredMovies].filter(movie => movie.id !== action.payload);
+      state.results = [...state.results].filter(movie => movie.id !== action.payload);
+      state.filteredMovies = [...state.filteredMovies].filter(movie => movie.id !== action.payload);
       state.filteredMoviesCount -= 1;
-    }
+    },
+    toggleLikeMovie: (state, action) => {
+      state.results = state.results.map(movie=> movie.id === action.payload.id ? {...movie, likes: action.payload.likes, liked: action.payload.liked} : movie)
+      state.filteredMovies = state.filteredMovies.map(movie=> movie.id === action.payload.id ? {...movie, likes: action.payload.likes, liked: action.payload.liked} : movie)
+    },
+    toggleDislikeMovie: (state, action) => {
+      state.results = state.results.map(movie=> movie.id === action.payload.id ? {...movie, dislikes: action.payload.dislikes, disliked: action.payload.disliked} : movie)
+      state.filteredMovies = state.filteredMovies.map(movie=> movie.id === action.payload.id ? {...movie, dislikes: action.payload.dislikes, disliked: action.payload.disliked} : movie)
+    },
   },
 
   extraReducers: (builder) => {
@@ -97,7 +105,7 @@ export const moviesSlice = createSlice({
   },
 });
 
-export const { getCategories, filterByCategory, resetFilters, prevPage, nextPage, delMovie} = moviesSlice.actions;
+export const { getCategories, filterByCategory, resetFilters, prevPage, nextPage, delMovie, likeMovie, unlikeMovie, dislikeMovie, undislikeMovie, toggleLikeMovie, toggleDislikeMovie} = moviesSlice.actions;
 
 export const isLoadingMovies = (state) => state.movies.loading;
 export const moviesData = (state) => state.movies.results;

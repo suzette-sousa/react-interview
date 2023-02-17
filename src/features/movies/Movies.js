@@ -10,7 +10,9 @@ import {
   filterByCategory,
   prevPage,
   nextPage,
-  delMovie
+  delMovie,
+  toggleLikeMovie,
+  toggleDislikeMovie,
 } from './moviesSlice';
 
 const Movies = () => {
@@ -43,6 +45,14 @@ const Movies = () => {
     dispatch(filterByCategory({category: e.target.innerHTML}))
   }
 
+  const onToggleLike = (movie) => {
+    dispatch(toggleLikeMovie({id: movie.id, likes: !movie.liked ? movie.likes + 1 : movie.likes - 1, liked: !movie.liked}));
+  }
+
+  const onToggleDislike = (movie) => {
+    dispatch(toggleDislikeMovie({id: movie.id, dislikes: !movie.disliked ? movie.dislikes + 1 : movie.dislikes - 1, disliked: !movie.disliked}));
+  }
+
   return (
     <>
       {!loading && (
@@ -66,6 +76,8 @@ const Movies = () => {
             <div key={movie.id} style={{'border': '1px solid'}}>
               <p>{movie.title}</p>
               <p>{movie.category}</p>
+              <p onClick={() => onToggleLike(movie)}>Likes {movie.likes}</p>
+              <p onClick={() => onToggleDislike(movie)}>Dislikes {movie.dislikes}</p>
               <span onClick={() => dispatch(delMovie(movie.id))}>SUPPRIMER</span>
             </div>
           ))}
