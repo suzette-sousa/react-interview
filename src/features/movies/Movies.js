@@ -8,6 +8,7 @@ import {
   categoriesData,
   resetFilters,
   filterByCategory,
+  setPage,
   prevPage,
   nextPage,
   delMovie,
@@ -42,6 +43,7 @@ const Movies = () => {
   }, [pageNumber])
 
   const onfilterByCategory = (e) => {
+    dispatch(setPage(1));
     dispatch(filterByCategory({category: e.target.innerHTML}))
   }
 

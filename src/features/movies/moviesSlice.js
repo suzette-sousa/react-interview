@@ -63,6 +63,9 @@ export const moviesSlice = createSlice({
         filteredMoviesCount: [...state.results].filter(movie => movie.category === action.payload.category).length
       }
     },
+    setPage: (state, action) => {
+      state.pageNumber = action.payload
+    },
     prevPage: (state) => {
       state.pageNumber -= 1;
     },
@@ -105,7 +108,7 @@ export const moviesSlice = createSlice({
   },
 });
 
-export const { getCategories, filterByCategory, resetFilters, prevPage, nextPage, delMovie, likeMovie, unlikeMovie, dislikeMovie, undislikeMovie, toggleLikeMovie, toggleDislikeMovie} = moviesSlice.actions;
+export const { getCategories, filterByCategory, resetFilters, prevPage, nextPage, delMovie, likeMovie, unlikeMovie, dislikeMovie, undislikeMovie, toggleLikeMovie, toggleDislikeMovie, setPage} = moviesSlice.actions;
 
 export const isLoadingMovies = (state) => state.movies.loading;
 export const moviesData = (state) => state.movies.results;
