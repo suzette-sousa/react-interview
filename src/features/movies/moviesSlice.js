@@ -69,6 +69,11 @@ export const moviesSlice = createSlice({
     nextPage: (state) => {
       state.pageNumber += 1;
     },
+    delMovie: (state, action) => {
+      state.results= [...state.results].filter(movie => movie.id !== action.payload);
+      state.filteredMovies= [...state.filteredMovies].filter(movie => movie.id !== action.payload);
+      state.filteredMoviesCount -= 1;
+    }
   },
 
   extraReducers: (builder) => {

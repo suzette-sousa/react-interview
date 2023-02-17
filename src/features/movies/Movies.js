@@ -66,6 +66,7 @@ const Movies = () => {
             <div key={movie.id} style={{'border': '1px solid'}}>
               <p>{movie.title}</p>
               <p>{movie.category}</p>
+              <span onClick={() => dispatch(delMovie(movie.id))}>SUPPRIMER</span>
             </div>
           ))}
 
