@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -16,6 +16,8 @@ import {
   toggleDislikeMovie,
 } from './moviesSlice';
 
+import Styles from "./Movies.module.scss";
+
 const Movies = () => {
   const categories = useSelector(categoriesData);
   const loading = useSelector(isLoadingMovies);
@@ -31,6 +33,8 @@ const Movies = () => {
 
   const nbPages = Math.ceil(moviesDisplayedCount/ 4);
   const dispatch = useDispatch();
+
+  const [displaySelectOptions, setDisplaySelectOptions] = useState(false);
   
   useEffect(() => {
     dispatch(loadMoviesAndCategories());
@@ -44,7 +48,8 @@ const Movies = () => {
 
   const onfilterByCategory = (e) => {
     dispatch(setPage(1));
-    dispatch(filterByCategory({category: e.target.innerHTML}))
+    dispatch(filterByCategory({category: e.target.innerHTML}));
+    setDisplaySelectOptions(!displaySelectOptions);
   }
 
   const onToggleLike = (movie) => {
@@ -59,41 +64,51 @@ const Movies = () => {
     <>
       {!loading && (
         <section>
-          <h1>Liste des films</h1>
-
-          {filters && <span onClick={() => dispatch(resetFilters())}>Reset filtres</span>}
-          <br/><br/>
+          <h1 className={Styles.title}>Liste des films</h1>
 
           <p>{moviesCount} film{moviesCount > 1 && "s"} répertorié{moviesCount > 1 && "s"}</p>
-          <br/><br/>
-          
-          {filters?.category && <span style={{'border': '1px solid'}}>{filters?.category}</span>}
-          <br></br>
-
-          {categories.filter((category) => category !== filters?.category).map((category, index) => (
-            <div key={index} onClick={(e) => onfilterByCategory(e)}>{category}</div>
-          ))}
-
-          {moviesDisplayed?.length > 0 && moviesDisplayed.map((movie) => (
-            <div key={movie.id} style={{'border': '1px solid'}}>
-              <p>{movie.title}</p>
-              <p>{movie.category}</p>
-              <p onClick={() => onToggleLike(movie)}>Likes {movie.likes}</p>
-              <p onClick={() => onToggleDislike(movie)}>Dislikes {movie.dislikes}</p>
-              <span onClick={() => dispatch(delMovie(movie.id))}>SUPPRIMER</span>
+          <div className={Styles.selectWrapper}>
+            <div className={Styles.selectOptionWrapper}>
+              {filters?.category && <span className={Styles.closeSelectOption} onClick={() => dispatch(resetFilters())}>X</span>}
+              <span className={Styles.selectOption} onClick={() => setDisplaySelectOptions(!displaySelectOptions)}>{filters?.category ? filters?.category : "Sélectionner une catégorie"}</span>
             </div>
-          ))}
+            
+
+            {displaySelectOptions && (
+              <div className={Styles.selectDisplayOptions}>
+                <div className={Styles.selectOptionWrapper}>
+                  {categories.filter((category) => category !== filters?.category).map((category, index) => (
+                    <div key={index} onClick={(e) => onfilterByCategory(e)} className={Styles.selectOption}>{category}</div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className={Styles.list}>
+            {moviesDisplayed?.length > 0 && moviesDisplayed.map((movie) => (
+              <div key={movie.id}>
+                <div className={Styles.listInner}>
+                  <h2>{movie.title}</h2>
+                  <p>{movie.category}</p>
+                  <p onClick={() => onToggleLike(movie)}>Likes {movie.likes}</p>
+                  <p onClick={() => onToggleDislike(movie)}>Dislikes {movie.dislikes}</p>
+                  <span className={Styles.btnDelete} onClick={() => dispatch(delMovie(movie.id))}>X</span>
+                </div>
+              </div>
+            ))}
+          </div>
 
           {filters?.category && filteredMoviesCount !== moviesCount && <p>{filteredMoviesCount} résultat{filteredMoviesCount > 1 && "s"}</p>}
           {moviesDisplayedCount > 0 && (
             <>
-              {pageNumber > 1 && <span onClick={() => dispatch(prevPage())}>Précédent</span>}
-              <br/>
-              <span>Page : {pageNumber}</span>
-              <br/>
-              nbPages: {nbPages}
-              <br/>
-              {pageNumber < nbPages && <span onClick={() => dispatch(nextPage())}>Suivant</span>}
+              <span>Page : {pageNumber} / {nbPages}</span>
+
+              <div className={Styles.inputPrevNext}>
+                {pageNumber > 1 && <span onClick={() => dispatch(prevPage())} className={Styles.inputPrev}>Précédent</span>}
+                {pageNumber < nbPages && <span onClick={() => dispatch(nextPage())} className={Styles.inputNext}>Suivant</span>}
+              </div>
+
             </>
           )}
         </section>

@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1c1e22;
+  text-align: center;
+  font-size: 1.3rem;
+  color: #fff;
+}
+h1, h2, h3, p {
+  margin: 0;
+}
+h1, h2 {
+  font-size: 1.8rem;
+}
+p {
+  margin: 0;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.App {
+  max-width: 1000px;
+  min-height: 100vh;
+  width: 100%;
+  margin: auto;
+}
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+}
+
+/*
+Variables
+*/
+:root {
+  --sw-color-princ: #ffe300;
+}

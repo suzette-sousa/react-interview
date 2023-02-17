@@ -1,0 +1,103 @@
+.title {
+  padding: 2rem 0;
+  text-transform: uppercase;
+  font-size: 3rem;
+  font-weight: 300;
+}
+
+h2 {
+  font-weight: 700;
+  font-size: 2rem;
+}
+.selectWrapper {
+  position: relative;
+}
+.selectDisplayOptions {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+.selectOptionWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 420px;
+  max-width: calc(100% - 10vw);
+  margin: 0.5rem auto;
+  background: #fff;
+  color: #000;
+}
+.closeSelectOption {
+  position: absolute;
+  width: 4rem;
+  height: 4rem;
+  right: 0;
+  left: calc(50% + 169px);
+  color: #000;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+}
+.selectOption {
+  max-width: 30rem;
+  width: 100%;
+  padding: 1rem;
+  height: 2rem;
+  font-size: 1.6rem;
+  border: 1px solid #ccc;
+  &:hover {
+    cursor: pointer;
+    outline: 2px solid var(--sw-color-princ);
+  }
+}
+.inputPrevNext {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+}
+.inputNext, .inputPrev {
+  background-color: var(--sw-color-princ);
+  padding: 1rem;
+  color: #000;
+}
+.inputNext {
+  margin-left: auto;
+}
+.inputPrev {
+  margin-right: auto;
+}
+
+
+.list {
+  @media screen and (min-width: 769px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  &>div {
+    padding: 1rem;
+  }
+}
+.listInner {
+  padding: 1rem;
+  background-color: #272b30;
+  box-shadow: 0 0 1px #ccc;
+  font-size: 1.5rem;
+  color: #fff;
+  &:hover {
+    background-color: #32383e;
+  }
+}
+
+.btnDelete {
+  display: inline-flex;
+  margin-top: 1rem;
+  background: none;
+  padding: 0.5rem;
+  border: 1px solid #f00;
+  color: #f00;
+  &:hover {
+    opacity: 0.8;
+    cursor: pointer;
+  }
+}
