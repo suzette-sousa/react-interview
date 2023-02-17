@@ -1,7 +1,7 @@
 # REACT-INTERVIEW
 
-# Stack
-React ⦿ Redux ⦿ Redux ⦿ Toolkit ⦿Sass
+## Stack
+React ⦿ Redux ⦿ Redux Toolkit ⦿ Sass
 
 
 ## Available Scripts
