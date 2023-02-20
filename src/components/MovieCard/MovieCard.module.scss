@@ -25,6 +25,20 @@
   display: flex;
   align-items: flex-end;
 }
+.label {
+  display: inline-flex;
+  align-items: center;
+  height: 2.2rem;
+  padding: 0 0.5rem;
+  border: 1px solid var(--sw-color-princ);
+  border-radius: 3rem;
+  font-size: 1rem;
+  &:hover {
+    background-color: var(--sw-color-princ);
+    color: #000;
+    cursor: pointer;
+  }
+}
 .ctas {
   grid-area: ctas;
   display: flex;
@@ -44,7 +58,7 @@
       cursor: initial;
     }
   }
-  .ctaActive {
+  .cta:hover, .ctaActive {
     color: var(--sw-color-princ);
   }
 }

@@ -39,7 +39,9 @@ const Movie = (props) => {
           <h2>{movie.title}</h2>
           <span className={Styles.btnDelete} onClick={() => onDeleteMovie(movie)}>X</span>
         </div>
-        <span className={Styles.category}>{movie.category}</span>
+        <span className={Styles.category}>
+          <span className={Styles.label}>{movie.category}</span>
+        </span>
         <span className={Styles.ctas}>
           <button onClick={() => onToggleLike(movie)} className={movie.liked ? Styles.ctaActive : Styles.cta} disabled={movie.disliked}>
             <LikeIcon />{movie.likes}

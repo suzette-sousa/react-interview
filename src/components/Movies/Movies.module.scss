@@ -6,8 +6,30 @@
 }
 
 h2 {
+  position: relative;
+  z-index: 1;
+  max-width: calc(100% - 15vw);
+  @media screen and (min-width: 769px) {
+    max-width: calc(100% - 3rem);
+  }
+  padding: 5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   font-weight: 700;
   font-size: 1.8rem;
+  &::after {
+    content: "";
+    width: 100%;
+    height: 19px;
+    background-color: #000;
+    position: absolute;
+    display: flex;
+    z-index: -1;
+    bottom: -5px;
+    right: -7px;
+    opacity: 0.4;
+  }
 }
 .selectWrapper {
   position: relative;
