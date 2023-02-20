@@ -4,7 +4,6 @@ import { movies$ } from '../../data/movies';
 const initialState = {
   status: 'idle',
   loadingMovies: true,
-  loadingCategories: true,
   results: [],
   filteredMovies: [],
   filteredMoviesCount: 0,
@@ -12,9 +11,10 @@ const initialState = {
   categories: [],
   filters: {category: null},
   pageNumber: 1,
-  pageSize: 4
+  pageSize: 4,
+  allLikes: 0,
+  allDislikes: 0,
 };
-
 
 export const getAllMoviesAsync = createAsyncThunk(
   'movies/fetchMovies',
@@ -25,44 +25,47 @@ export const getAllMoviesAsync = createAsyncThunk(
   }
 );
 
-export const getCategoriesAsync = createAsyncThunk(
-  'movies/fetchCategories',
-  async () => {
-    const movies = await movies$;
-    const categories = [...new Set(movies.map(movie=> movie.category))]
+export const filterByCategory = createAsyncThunk(
+  'movies/getMoviesByCategory',
+  async (payload, store) => {
+    const movies = await store.getState().movies.results;
+    const filteredMovies = payload.category ? movies.filter(movie => movie.category === payload.category) : movies;
 
-    return categories;
+    return {filteredMovies: filteredMovies, filters: payload};
   }
 );
 
-
-export const loadMoviesAndCategories = () => (dispatch, getState) => {
-  dispatch(getAllMoviesAsync());
-  const currentValue = isLoadingMovies(getState());
-  if (!currentValue) {
-    dispatch(getCategoriesAsync());
+export const delMovie = createAsyncThunk(
+  'movies/deleteMovie',
+  async (payload, store) => {
+    const moviesBeforeDelete = await store.getState().movies.results;
+    const movies = moviesBeforeDelete.filter(movie => movie.id !== payload)
+    return movies;
   }
-};
+);
 
+export const toggleLikeMovie = createAsyncThunk(
+  'movies/toggleLikeMovies',
+  async (payload, store) => {
+    const movies = await store.getState().movies.results;
+    const isLikedMovies = movies.map(movie=> movie.id === payload.id ? {...movie, likes: payload.likes, liked: payload.liked} : movie);
+    return {movies: isLikedMovies, likes: payload.likes};
+  }
+);
+
+export const toggleDislikeMovie = createAsyncThunk(
+  'movies/toggleDislikeMovies',
+  async (payload, store) => {
+    const movies = await store.getState().movies.results;
+    const isDislikedMovies = movies.map(movie=> movie.id === payload.id ? {...movie, dislikes: payload.dislikes, disliked: payload.disliked} : movie);
+    return {movies: isDislikedMovies, dislikes: payload.dislikes};
+  }
+);
 
 export const moviesSlice = createSlice({
   name: 'movies',
   initialState,
   reducers: {
-    resetFilters: (state) => {
-      return {
-        ...state,
-        filters: {category: null}
-      }
-    },
-    filterByCategory: (state, action) => {
-      return {
-        ...state,
-        filteredMovies: [...state.results].filter(movie => movie.category === action.payload.category).slice((state?.pageNumber - 1) * state?.pageSize, state?.pageNumber * state?.pageSize),
-        filters: action.payload,
-        filteredMoviesCount: [...state.results].filter(movie => movie.category === action.payload.category).length
-      }
-    },
     setPage: (state, action) => {
       state.pageNumber = action.payload
     },
@@ -71,19 +74,6 @@ export const moviesSlice = createSlice({
     },
     nextPage: (state) => {
       state.pageNumber += 1;
-    },
-    delMovie: (state, action) => {
-      state.results = [...state.results].filter(movie => movie.id !== action.payload);
-      state.filteredMovies = [...state.filteredMovies].filter(movie => movie.id !== action.payload);
-      state.filteredMoviesCount -= 1;
-    },
-    toggleLikeMovie: (state, action) => {
-      state.results = state.results.map(movie=> movie.id === action.payload.id ? {...movie, likes: action.payload.likes, liked: action.payload.liked} : movie)
-      state.filteredMovies = state.filteredMovies.map(movie=> movie.id === action.payload.id ? {...movie, likes: action.payload.likes, liked: action.payload.liked} : movie)
-    },
-    toggleDislikeMovie: (state, action) => {
-      state.results = state.results.map(movie=> movie.id === action.payload.id ? {...movie, dislikes: action.payload.dislikes, disliked: action.payload.disliked} : movie)
-      state.filteredMovies = state.filteredMovies.map(movie=> movie.id === action.payload.id ? {...movie, dislikes: action.payload.dislikes, disliked: action.payload.disliked} : movie)
     },
   },
 
@@ -95,20 +85,44 @@ export const moviesSlice = createSlice({
       .addCase(getAllMoviesAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.results = action.payload;
+        state.filteredMovies = action.payload.slice((state.pageNumber - 1) * state.pageSize, state.pageNumber * state.pageSize);
+        state.categories = [...new Set(action.payload.map(movie=> movie.category))]
         state.loadingMovies = false
       })
-      .addCase(getCategoriesAsync.pending, (state) => {
+      .addCase(filterByCategory.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(getCategoriesAsync.fulfilled, (state, action) => {
+      .addCase(filterByCategory.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.categories = action.payload;
-        state.loadingCategories = false
-      });
+        state.filteredMovies = action.payload.filteredMovies.slice((state?.pageNumber - 1) * state?.pageSize, state?.pageNumber * state?.pageSize);
+        state.filters = action.payload.filters;
+        state.filteredMoviesCount = action.payload.filteredMovies.length;
+        state.categories = [...new Set(state.results.map(movie=> movie.category))]
+      })
+      .addCase(delMovie.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(delMovie.fulfilled, (state, action) => {
+        state.results = action.payload;
+      })
+      .addCase(toggleLikeMovie.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(toggleLikeMovie.fulfilled, (state, action) => {
+        state.results = action.payload.movies;
+        state.allLikes += action.payload.likes;
+      })
+      .addCase(toggleDislikeMovie.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(toggleDislikeMovie.fulfilled, (state, action) => {
+        state.results = action.payload.movies;
+        state.allDislikes += action.payload.dislikes;
+      })
   },
 });
 
-export const { getCategories, filterByCategory, resetFilters, prevPage, nextPage, delMovie, likeMovie, unlikeMovie, dislikeMovie, undislikeMovie, toggleLikeMovie, toggleDislikeMovie, setPage} = moviesSlice.actions;
+export const {setPage, prevPage, nextPage, resetFilters} = moviesSlice.actions;
 
 export const isLoadingMovies = (state) => state.movies.loading;
 export const moviesData = (state) => state.movies.results;

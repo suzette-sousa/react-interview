@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  loadMoviesAndCategories,
+  getAllMoviesAsync,
   isLoadingMovies,
   moviesData,
   categoriesData,
-  resetFilters,
   filterByCategory,
   setPage,
   prevPage,
@@ -25,30 +24,36 @@ const Movies = () => {
   const filters = useSelector((state) => state.movies.filters);
   const filteredMoviesCount = useSelector((state) => state.movies.filteredMoviesCount);
   const moviesCount = useSelector(moviesData).length;
+  const allLikes = useSelector((state) => state.movies.allLikes);
+  const allDislikes = useSelector((state) => state.movies.allDislikes);
   const pageNumber = useSelector((state) => state.movies.pageNumber);
-  const pageSize = useSelector((state) => state.movies.pageSize);
-  const movies = useSelector(moviesData).slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
-  const moviesDisplayed = filters.category ? filteredMovies : movies;
   const moviesDisplayedCount = filters.category ? filteredMoviesCount : moviesCount;
 
   const nbPages = Math.ceil(moviesDisplayedCount/ 4);
   const dispatch = useDispatch();
 
   const [displaySelectOptions, setDisplaySelectOptions] = useState(false);
+  const [filterCategory, setFilterCategory] = useState(false);
   
   useEffect(() => {
-    dispatch(loadMoviesAndCategories());
+    dispatch(getAllMoviesAsync());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch])
+  }, [])
 
   useEffect(() => {
-    if(filters?.category) dispatch(filterByCategory({category: filters?.category}))
+    dispatch(filterByCategory({category: filterCategory !== false ? filterCategory : filters?.category }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageNumber])
+  }, [filterCategory, moviesCount, filteredMoviesCount, pageNumber, allLikes, allDislikes])
+
+  useEffect(() => {
+    if(!filteredMovies.length && filteredMoviesCount > 0) dispatch(prevPage());
+    if(!filteredMovies.length && filteredMoviesCount === 0) onResetFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredMovies.length])
 
   const onfilterByCategory = (e) => {
     dispatch(setPage(1));
-    dispatch(filterByCategory({category: e.target.innerHTML}));
+    setFilterCategory(e.target.innerHTML);
     setDisplaySelectOptions(!displaySelectOptions);
   }
 
@@ -60,17 +65,36 @@ const Movies = () => {
     dispatch(toggleDislikeMovie({id: movie.id, dislikes: !movie.disliked ? movie.dislikes + 1 : movie.dislikes - 1, disliked: !movie.disliked}));
   }
 
+  const onDeleteMovie = (movie) => {
+    dispatch(delMovie(movie.id));
+    dispatch(filterByCategory({category: filters?.category}));
+  }
+
+  const onPaginate = (whichPage) => {
+    if(whichPage === 'next') dispatch(nextPage());
+    if(whichPage === 'prev') dispatch(prevPage());
+    dispatch(filterByCategory({category: filters?.category}));
+  }
+
+  const onResetFilters = () => {
+    setFilterCategory(null)
+  }
+
   return (
     <>
       {!loading && (
+        <>
         <section>
           <h1 className={Styles.title}>Liste des films</h1>
 
           <p>{moviesCount} film{moviesCount > 1 && "s"} répertorié{moviesCount > 1 && "s"}</p>
           <div className={Styles.selectWrapper}>
             <div className={Styles.selectOptionWrapper}>
-              {filters?.category && <span className={Styles.closeSelectOption} onClick={() => dispatch(resetFilters())}>X</span>}
-              <span className={Styles.selectOption} onClick={() => setDisplaySelectOptions(!displaySelectOptions)}>{filters?.category ? filters?.category : "Sélectionner une catégorie"}</span>
+              {filters?.category && <span className={Styles.closeSelectOption} onClick={() => onResetFilters()}>X</span>}
+              <span className={Styles.selectOption} onClick={() => setDisplaySelectOptions(!displaySelectOptions)}>
+                {categories.filter((category) => category === filters?.category).length
+                  ? categories.filter((category) => category === filters?.category) 
+                  : "Sélectionner une catégorie"}</span>
             </div>
             
 
@@ -86,32 +110,32 @@ const Movies = () => {
           </div>
 
           <div className={Styles.list}>
-            {moviesDisplayed?.length > 0 && moviesDisplayed.map((movie) => (
+            {filteredMovies?.length > 0 && filteredMovies.map((movie) => (
               <div key={movie.id}>
                 <div className={Styles.listInner}>
                   <h2>{movie.title}</h2>
                   <p>{movie.category}</p>
                   <p onClick={() => onToggleLike(movie)}>Likes {movie.likes}</p>
                   <p onClick={() => onToggleDislike(movie)}>Dislikes {movie.dislikes}</p>
-                  <span className={Styles.btnDelete} onClick={() => dispatch(delMovie(movie.id))}>X</span>
+                  <span className={Styles.btnDelete} onClick={() => onDeleteMovie(movie)}>X</span>
                 </div>
               </div>
             ))}
           </div>
-
-          {filters?.category && filteredMoviesCount !== moviesCount && <p>{filteredMoviesCount} résultat{filteredMoviesCount > 1 && "s"}</p>}
-          {moviesDisplayedCount > 0 && (
-            <>
-              <span>Page : {pageNumber} / {nbPages}</span>
-
-              <div className={Styles.inputPrevNext}>
-                {pageNumber > 1 && <span onClick={() => dispatch(prevPage())} className={Styles.inputPrev}>Précédent</span>}
-                {pageNumber < nbPages && <span onClick={() => dispatch(nextPage())} className={Styles.inputNext}>Suivant</span>}
-              </div>
-
-            </>
-          )}
         </section>
+        
+        {filters?.category && filteredMoviesCount !== moviesCount && <p>{filteredMoviesCount} résultat{filteredMoviesCount > 1 && "s"}</p>}
+        {moviesDisplayedCount > 0 && (
+          <>
+            <span>Page : {pageNumber} / {nbPages}</span>
+
+            <div className={Styles.inputPrevNext}>
+              {pageNumber > 1 && <span onClick={() => onPaginate('prev')} className={Styles.inputPrev}>Précédent</span>}
+              {pageNumber < nbPages && <span onClick={() => onPaginate('next')} className={Styles.inputNext}>Suivant</span>}
+            </div>
+          </>
+        )}
+        </>
       )}
     </>
   );

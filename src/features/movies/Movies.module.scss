@@ -55,11 +55,13 @@ h2 {
   bottom: 0;
   display: flex;
   justify-content: space-between;
+  margin-top: auto;
 }
 .inputNext, .inputPrev {
   background-color: var(--sw-color-princ);
   padding: 1rem;
   color: #000;
+  cursor: pointer;
 }
 .inputNext {
   margin-left: auto;
