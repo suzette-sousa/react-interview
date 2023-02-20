@@ -6,6 +6,7 @@ import {
   delMovie,
   toggleLikeMovie,
   toggleDislikeMovie,
+  setPage,
 } from '../../features/movies/moviesSlice';
 
 import Styles from "./MovieCard.module.scss";
@@ -14,7 +15,7 @@ import {ReactComponent as LikeIcon}  from "../../assets/svg/like.svg";
 import {ReactComponent as DislikeIcon}  from "../../assets/svg/like.svg";
 
 const Movie = (props) => {
-  const {movie} = props;
+  const {movie, onfilterByCategory} = props;
   const filters = useSelector((state) => state.movies.filters);
 
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ const Movie = (props) => {
           <span className={Styles.btnDelete} onClick={() => onDeleteMovie(movie)}>X</span>
         </div>
         <span className={Styles.category}>
-          <span className={Styles.label}>{movie.category}</span>
+          <span className={Styles.label} onClick={(e) => onfilterByCategory(e)}>{movie.category}</span>
         </span>
         <span className={Styles.ctas}>
           <button onClick={() => onToggleLike(movie)} className={movie.liked ? Styles.ctaActive : Styles.cta} disabled={movie.disliked}>

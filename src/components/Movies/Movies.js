@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -53,6 +53,10 @@ const Movies = () => {
   const onfilterByCategory = (e) => {
     dispatch(setPage(1));
     setFilterCategory(e.target.innerHTML);
+  }
+
+  const onfilterOptionsCategories = (e) => {
+    onfilterByCategory(e);
     setDisplaySelectOptions(!displaySelectOptions);
   }
 
@@ -66,6 +70,27 @@ const Movies = () => {
     setFilterCategory(null)
   }
 
+  const selectDisplayOptions = useRef(null);
+
+  const useOnClickOutside = (ref, handler) => {
+    useEffect(() => {
+        const listener = (event) => {
+          if (!ref.current || ref.current.contains(event.target)) {
+            return;
+          }
+          handler(event);
+        };
+        document.addEventListener("mousedown", listener);
+        document.addEventListener("touchstart", listener);
+        return () => {
+          document.removeEventListener("mousedown", listener);
+          document.removeEventListener("touchstart", listener);
+        };
+      }, [ref, handler]);
+  }
+
+  useOnClickOutside(selectDisplayOptions, () => setDisplaySelectOptions(false));
+
   return (
     <>
       {!loading && (
@@ -74,7 +99,7 @@ const Movies = () => {
           <h1 className={Styles.title}>Liste des films</h1>
 
           <p>{moviesCount} film{moviesCount > 1 && "s"} répertorié{moviesCount > 1 && "s"}</p>
-          
+
           <div className={Styles.selectWrapper}>
             <div className={Styles.selectOptionWrapper}>
               {filters?.category && <span className={Styles.closeSelectOption} onClick={() => onResetFilters()}>X</span>}
@@ -85,10 +110,10 @@ const Movies = () => {
             </div>
 
             {displaySelectOptions && (
-              <div className={Styles.selectDisplayOptions}>
+              <div className={Styles.selectDisplayOptions} ref={selectDisplayOptions}>
                 <div className={Styles.selectOptionWrapper}>
                   {categories.filter((category) => category !== filters?.category).map((category, index) => (
-                    <div key={index} onClick={(e) => onfilterByCategory(e)} className={Styles.selectOption}>{category}</div>
+                    <div key={index} onClick={(e) => onfilterOptionsCategories(e)} className={Styles.selectOption}>{category}</div>
                   ))}
                 </div>
               </div>
@@ -97,7 +122,7 @@ const Movies = () => {
 
           <div className={Styles.list}>
             {filteredMovies?.length > 0 && filteredMovies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
+              <MovieCard key={movie.id} movie={movie} onfilterByCategory={(e) => onfilterByCategory(e)} />
             ))}
           </div>
         </section>
