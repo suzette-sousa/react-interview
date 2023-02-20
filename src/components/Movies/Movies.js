@@ -10,15 +10,11 @@ import {
   setPage,
   prevPage,
   nextPage,
-  delMovie,
-  toggleLikeMovie,
-  toggleDislikeMovie,
-} from './moviesSlice';
+} from '../../features/movies/moviesSlice';
 
 import Styles from "./Movies.module.scss";
 
-import {ReactComponent as LikeIcon}  from "../../assets/svg/like.svg";
-import {ReactComponent as DislikeIcon}  from "../../assets/svg/like.svg";
+import MovieCard from '../MovieCard/MovieCard';
 
 const Movies = () => {
   const categories = useSelector(categoriesData);
@@ -60,19 +56,6 @@ const Movies = () => {
     setDisplaySelectOptions(!displaySelectOptions);
   }
 
-  const onToggleLike = (movie) => {
-    dispatch(toggleLikeMovie({id: movie.id, likes: !movie.liked ? movie.likes + 1 : movie.likes - 1, liked: !movie.liked}));
-  }
-
-  const onToggleDislike = (movie) => {
-    dispatch(toggleDislikeMovie({id: movie.id, dislikes: !movie.disliked ? movie.dislikes + 1 : movie.dislikes - 1, disliked: !movie.disliked}));
-  }
-
-  const onDeleteMovie = (movie) => {
-    dispatch(delMovie(movie.id));
-    dispatch(filterByCategory({category: filters?.category}));
-  }
-
   const onPaginate = (whichPage) => {
     if(whichPage === 'next') dispatch(nextPage());
     if(whichPage === 'prev') dispatch(prevPage());
@@ -91,6 +74,7 @@ const Movies = () => {
           <h1 className={Styles.title}>Liste des films</h1>
 
           <p>{moviesCount} film{moviesCount > 1 && "s"} répertorié{moviesCount > 1 && "s"}</p>
+          
           <div className={Styles.selectWrapper}>
             <div className={Styles.selectOptionWrapper}>
               {filters?.category && <span className={Styles.closeSelectOption} onClick={() => onResetFilters()}>X</span>}
@@ -99,7 +83,6 @@ const Movies = () => {
                   ? categories.filter((category) => category === filters?.category) 
                   : "Sélectionner une catégorie"}</span>
             </div>
-            
 
             {displaySelectOptions && (
               <div className={Styles.selectDisplayOptions}>
@@ -114,19 +97,7 @@ const Movies = () => {
 
           <div className={Styles.list}>
             {filteredMovies?.length > 0 && filteredMovies.map((movie) => (
-              <div key={movie.id}>
-                <div className={Styles.listInner}>
-                  <div className={Styles.movieTitle}>
-                    <h2>{movie.title}</h2>
-                    <span className={Styles.btnDelete} onClick={() => onDeleteMovie(movie)}>X</span>
-                  </div>
-                  <span className={Styles.category}>{movie.category}</span>
-                  <span className={Styles.ctas}>
-                    <button onClick={() => onToggleLike(movie)} className={movie.liked ? Styles.ctaActive : Styles.cta} disabled={movie.disliked}><LikeIcon />{movie.likes}</button>
-                    <button onClick={() => onToggleDislike(movie)} className={movie.disliked ? Styles.ctaActive : Styles.cta} disabled={movie.liked}><DislikeIcon />{movie.dislikes}</button>
-                  </span>
-                </div>
-              </div>
+              <MovieCard key={movie.id} movie={movie} />
             ))}
           </div>
         </section>

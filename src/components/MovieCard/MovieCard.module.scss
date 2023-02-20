@@ -1,0 +1,64 @@
+.listInner {
+  display: grid;
+  grid-template-areas: 
+  'movieTitle movieTitle'
+  'category ctas';
+  padding: 1rem;
+  background-color: #272b30;
+  box-shadow: 0 0 1px #ccc;
+  text-align: left;
+  font-size: 1.5rem;
+  color: #fff;
+  &:hover {
+    background-color: #32383e;
+  }
+}
+.movieTitle {
+  grid-area: movieTitle;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+.category {
+  grid-area: category;
+  display: flex;
+  align-items: flex-end;
+}
+.ctas {
+  grid-area: ctas;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  .cta, .ctaActive {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    color: #fff;
+    svg {
+      width: 2.5rem;
+    }
+    &:disabled {
+      opacity: 0.3;
+      cursor: initial;
+    }
+  }
+  .ctaActive {
+    color: var(--sw-color-princ);
+  }
+}
+.btnDelete {
+  display: inline-flex;
+  background: none;
+  padding: 0.5rem;
+  margin-left: 0.5rem;
+  border: 1px solid #000;
+  background-color: #000;
+  color: #fff;
+  opacity: 0.5;
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+}
