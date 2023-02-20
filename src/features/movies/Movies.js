@@ -17,6 +17,9 @@ import {
 
 import Styles from "./Movies.module.scss";
 
+import {ReactComponent as LikeIcon}  from "../../assets/svg/like.svg";
+import {ReactComponent as DislikeIcon}  from "../../assets/svg/like.svg";
+
 const Movies = () => {
   const categories = useSelector(categoriesData);
   const loading = useSelector(isLoadingMovies);
@@ -113,18 +116,22 @@ const Movies = () => {
             {filteredMovies?.length > 0 && filteredMovies.map((movie) => (
               <div key={movie.id}>
                 <div className={Styles.listInner}>
-                  <h2>{movie.title}</h2>
-                  <p>{movie.category}</p>
-                  <p onClick={() => onToggleLike(movie)}>Likes {movie.likes}</p>
-                  <p onClick={() => onToggleDislike(movie)}>Dislikes {movie.dislikes}</p>
-                  <span className={Styles.btnDelete} onClick={() => onDeleteMovie(movie)}>X</span>
+                  <div className={Styles.movieTitle}>
+                    <h2>{movie.title}</h2>
+                    <span className={Styles.btnDelete} onClick={() => onDeleteMovie(movie)}>X</span>
+                  </div>
+                  <span className={Styles.category}>{movie.category}</span>
+                  <span className={Styles.ctas}>
+                    <button onClick={() => onToggleLike(movie)} className={movie.liked ? Styles.ctaActive : Styles.cta} disabled={movie.disliked}><LikeIcon />{movie.likes}</button>
+                    <button onClick={() => onToggleDislike(movie)} className={movie.disliked ? Styles.ctaActive : Styles.cta} disabled={movie.liked}><DislikeIcon />{movie.dislikes}</button>
+                  </span>
                 </div>
               </div>
             ))}
           </div>
         </section>
-        
-        {filters?.category && filteredMoviesCount !== moviesCount && <p>{filteredMoviesCount} résultat{filteredMoviesCount > 1 && "s"}</p>}
+
+        <p>{filteredMoviesCount} résultat{filteredMoviesCount > 1 && "s"}</p>
         {moviesDisplayedCount > 0 && (
           <>
             <span>Page : {pageNumber} / {nbPages}</span>
