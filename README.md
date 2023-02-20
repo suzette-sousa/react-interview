@@ -4,20 +4,14 @@
 React ⦿ Redux ⦿ Redux Toolkit ⦿ Sass
 
 
-## Available Scripts
-
-In the project directory, you can run:
+## Scripts
 
 ### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+-> [http://localhost:3000](http://localhost:3000)
 
 ### `npm run build`
 
 ### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
 
 ## Brief
